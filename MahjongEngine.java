@@ -7,7 +7,7 @@ public class MahjongEngine {
     Tiles[] wall;
     Tiles liveDiscard;
     Player currPlayer;
-
+dd
     public MahjongEngine(){
         player1 = new Player(Player.EAST_WIND, );
         player2 = new Player(Player.SOUTH_WIND, );
