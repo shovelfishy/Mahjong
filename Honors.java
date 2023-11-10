@@ -9,6 +9,11 @@ public class Honors extends Tiles{
 
     private int honorType;
 
+    public Honors(int honorType){
+        super(Tiles.HONORS);    
+        this.honorType = honorType;
+    }
+
     public int GetHonorType() {
         return honorType;
     }

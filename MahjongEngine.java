@@ -7,13 +7,38 @@ public class MahjongEngine {
     Tiles[] wall;
     Tiles liveDiscard;
     Player currPlayer;
-dd
+    
+    private int random(int min, int max){
+        return (int)Math.round(Math.random()*(max-min)+min);
+    } 
+
+    private Tiles[] remove(Tiles[] arr, int index){
+        Tiles[] newArr = new Tiles[arr.length-1];
+
+        int counter = 0;
+        for(int i = 0; i < arr.length; i++){
+            if(i != index){
+                newArr[counter] = arr[i];
+                counter++;
+            }
+        }
+        return newArr; 
+    }
+
+    private Tiles[] DealTiles(int numTiles){
+        Tiles[] hand = new Tiles[numTiles];
+        for(int i=0; i<numTiles; i++){
+            int index = random(0, wall.length);
+            Tiles tile = wall[index];
+            hand[i] = tile;
+            wall = remove(wall, index);
+        }
+        return hand;
+    }
+
+
     public MahjongEngine(){
-        player1 = new Player(Player.EAST_WIND, );
-        player2 = new Player(Player.SOUTH_WIND, );
-        player3 = new Player(Player.WEST_WIND, );
-        player4 = new Player(Player.NORTH_WIND, );
-        wall = new Tiles[136];  
+        wall = new Tiles[136];
 
         int insertIndex = 0;
         for(int i = 0; i<4; i++){
@@ -22,9 +47,9 @@ dd
                 Dot dotTile = new Dot(j+1);
                 Bamboo bambooTile = new Bamboo(j+1);
 
-                Tiles[insertIndex] = charTile;
-                Tiles[insertIndex+1] = dotTile;
-                Tiles[insertIndex+2] = bambooTileTile;
+                wall[insertIndex] = charTile;
+                wall[insertIndex+1] = dotTile;
+                wall[insertIndex+2] = bambooTile;
                 insertIndex += 3;
             }
 
@@ -35,14 +60,22 @@ dd
             Honors redHonor = new Honors(Honors.RED_HONOR);
             Honors whiteHonor = new Honors(Honors.WHITE_HONOR);
             Honors greenHonor = new Honors(Honors.GREEN_HONOR);
-            Tiles[insertIndex] = eastHonor;
-            Tiles[insertIndex+1] = southHonor;
-            Tiles[insertIndex+2] = westHonor;
-            Tiles[insertIndex+3] = northHonor;
-            Tiles[insertIndex+4] = redHonor;
-            Tiles[insertIndex+5] = whiteHonor;
-            Tiles[insertIndex+6] = greenHonor;
+            wall[insertIndex] = eastHonor;
+            wall[insertIndex+1] = southHonor;
+            wall[insertIndex+2] = westHonor;
+            wall[insertIndex+3] = northHonor;
+            wall[insertIndex+4] = redHonor;
+            wall[insertIndex+5] = whiteHonor;
+            wall[insertIndex+6] = greenHonor;
             insertIndex += 7;
         }
+
+        System.out.println(wall.length);
+        System.out.println(((Honors)wall[135]).GetHonorType());
+        player1 = new Player(Player.EAST_WIND, DealTiles(14));
+        player2 = new Player(Player.SOUTH_WIND, DealTiles(13));
+        player3 = new Player(Player.WEST_WIND, DealTiles(13));
+        player4 = new Player(Player.NORTH_WIND, DealTiles(13));
+        System.out.println(wall.length);
     }
 }

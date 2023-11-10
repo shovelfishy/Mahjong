@@ -1,14 +1,21 @@
 public class Player {
 
+    // GLOBAL CONSTANTS: PLAYER SEAT WINDS
     public static final int EAST_WIND = 100;
     public static final int NORTH_WIND = 101;
     public static final int WEST_WIND = 102;
     public static final int SOUTH_WIND = 103;
 
+    // Private variables
     private int wind;
     private Tiles[][] exposedMelds;
     private Tiles[] concealedTiles;
     private Tiles[] hand;
+
+    public Player(int wind, Tiles[] hand){
+        this.wind = wind;
+        this.hand = hand;
+    }
 
     private Tiles[] copyTiles(Tiles[] list){
         Tiles[] temp = new Tiles[list.length];
@@ -16,11 +23,6 @@ public class Player {
             temp[i] = list[i];
         }
         return temp;
-    }
-
-    public Player(int wind, Tiles[] hand){
-        this.wind = wind;
-        this.hand = hand;
     }
 
     // public void SwapTiles(int pos, Tiles newTile){
