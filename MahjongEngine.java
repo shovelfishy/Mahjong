@@ -8,6 +8,11 @@ public class MahjongEngine {
     Tiles liveDiscard;
     Player currPlayer;
     
+    // TESTING
+    public void SetLiveDiscard(Tiles tile){
+        liveDiscard = tile;
+    }
+
     private int random(int min, int max){
         return (int)Math.round(Math.random()*(max-min)+min);
     } 
@@ -27,15 +32,14 @@ public class MahjongEngine {
 
     private Tiles[] DealTiles(int numTiles){
         Tiles[] hand = new Tiles[numTiles];
-        for(int i=0; i<numTiles; i++){
-            int index = random(0, wall.length);
+        for(int i=0; i < numTiles; i++){
+            int index = random(0, wall.length-1);
             Tiles tile = wall[index];
             hand[i] = tile;
             wall = remove(wall, index);
         }
         return hand;
     }
-
 
     public MahjongEngine(){
         wall = new Tiles[136];
@@ -70,12 +74,18 @@ public class MahjongEngine {
             insertIndex += 7;
         }
 
-        System.out.println(wall.length);
-        System.out.println(((Honors)wall[135]).GetHonorType());
         player1 = new Player(Player.EAST_WIND, DealTiles(14));
         player2 = new Player(Player.SOUTH_WIND, DealTiles(13));
         player3 = new Player(Player.WEST_WIND, DealTiles(13));
         player4 = new Player(Player.NORTH_WIND, DealTiles(13));
-        System.out.println(wall.length);
     }
+
+    public Tiles GetLiveDiscard() {
+        return liveDiscard;
+    }
+
+    public Player GetCurrPlayer() {
+        return currPlayer;
+    }
+    
 }

@@ -12,9 +12,15 @@ public class Player {
     private Tiles[] concealedTiles;
     private Tiles[] hand;
 
+    //TESTING
+    public void SetHand(Tiles[] hand){
+        this.hand = hand;
+    }
+
     public Player(int wind, Tiles[] hand){
         this.wind = wind;
         this.hand = hand;
+        this.concealedTiles = hand;
     }
 
     private Tiles[] copyTiles(Tiles[] list){
@@ -25,26 +31,8 @@ public class Player {
         return temp;
     }
 
-    // public void SwapTiles(int pos, Tiles newTile){
-    //     Tiles[][] temp = new Tiles[completedMelds.length][];
+    
 
-    // }
-
-    public int CheckMelds(Tiles searchTile){
-        Tiles[] identicalTiles = {searchTile};
-        Tiles[] conseqTiles = {searchTile};
-        int meldType = 0;
-        for(int i = 0; i < hand.length; i++){
-            if(hand[i].GetSuit() == searchTile.GetSuit()){
-                int s
-                if(hand[i].GetNum == searchTile.GetNum() - 1 )
-                if(hand[i].GetNum() == searchTile.GetNum()){
-
-                }
-            }
-        }
-
-    }
     public boolean CheckWinnningHand(){
 
     }
@@ -54,9 +42,13 @@ public class Player {
         hand[pos1] = hand[pos2];
         hand[pos2] = temp;
     }
+
     public void SwapTiles(int pos, Tiles newTile){
         Tiles oldTile = hand[pos];
         hand[pos] = newTile;
+
+        // Swap the tile in their concealed hand
+        // The concealedTiles array does not have the same indices as the hand array
         Tiles[] temp = new Tiles[concealedTiles.length - 1];
         int counter = 0;
         for(int i = 0; i < concealedTiles.length; i++){
