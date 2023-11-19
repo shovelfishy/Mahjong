@@ -1,9 +1,12 @@
+import java.util.Arrays;
+
 public class MahjongEngine {
 
     Player player1;
     Player player2;
     Player player3;
     Player player4;
+    Player[] players;
     Tiles[] wall;
     Tiles liveDiscard;
     Player currPlayer;
@@ -13,6 +16,8 @@ public class MahjongEngine {
         liveDiscard = tile;
     }
 
+
+    
     private int random(int min, int max){
         return (int)Math.round(Math.random()*(max-min)+min);
     } 
@@ -74,12 +79,41 @@ public class MahjongEngine {
             insertIndex += 7;
         }
 
-        player1 = new Player(Player.EAST_WIND, DealTiles(14));
+        player1 = new Player(Player.EAST_WIND, DealTiles(13));
         player2 = new Player(Player.SOUTH_WIND, DealTiles(13));
         player3 = new Player(Player.WEST_WIND, DealTiles(13));
         player4 = new Player(Player.NORTH_WIND, DealTiles(13));
+        currPlayer = player3;
+        players = new Player[]{player1, player2, player3, player4};
     }
 
+    public Tiles DrawTile(){
+        int index = random(0, wall.length-1);
+        Tiles tile = wall[index];
+        wall = remove(wall, index);
+        currPlayer.AddTile(tile);
+        return tile;
+    }
+
+    public int DiscardTile(Player player, int pos){
+        liveDiscard = player.DiscardTile(pos-1);
+        return 1;
+    }
+
+    public boolean IsGameOver(){
+        return wall.length == 0;
+    }
+
+    public void SwitchPlayer(){
+        int currPlayerIndex = 0;
+        for(int i = 0; i < players.length; i++){
+            if(players[i] == currPlayer) currPlayerIndex = i;
+        }
+
+        int newPlayerIndex = (currPlayerIndex+1)%4;
+        currPlayer = players[newPlayerIndex];
+    }
+    
     public Tiles GetLiveDiscard() {
         return liveDiscard;
     }

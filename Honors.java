@@ -14,8 +14,45 @@ public class Honors extends Tiles{
         this.honorType = honorType;
     }
 
+    /* JAVA DOC DESC 
+    * @return         - The tile's honor type */
     public int GetHonorType() {
         return honorType;
     }
     
+    /* JAVA DOC DESC 
+    * @return         -  */
+    public String DisplayTileNum(){
+        return "|HONORS ";
+    }
+
+    /* JAVA DOC DESC 
+    * @return         -  */
+    public String DisplayTileSuit(){
+        String suit = "";
+        switch(honorType){
+            case EAST_HONOR:
+                suit = "| EAST  ";
+                break;
+            case SOUTH_HONOR:
+                suit = "| SOUTH ";
+                break;
+            case WEST_HONOR:
+                suit = "| WEST  ";
+                break;
+            case NORTH_HONOR:
+                suit = "| NORTH ";
+                break;
+            case RED_HONOR:
+                suit = "|  RED  ";
+                break;
+            case WHITE_HONOR:
+                suit = "| WHITE ";
+                break;
+            case GREEN_HONOR:
+                suit = "| GREEN ";
+                break;
+        }
+        return suit;
+    }
 }

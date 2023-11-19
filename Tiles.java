@@ -1,6 +1,7 @@
 import java.util.Arrays;
 
 public abstract class Tiles {
+    public static final int NO_MELD = -200;
     public static final int PONG_MELD = 200;
     public static final int CHOW_MELD = 201;
     public static final int EYE_PAIR = 202;
@@ -41,7 +42,7 @@ public abstract class Tiles {
     }
     
     public abstract int CheckMeld(Tiles[] playerConcealedHand);
-    public abstract Tiles[] CheckMeld(Tiles[] playerConcealedHand, int meldType);
+    public abstract Tiles[][] CheckMeld(Tiles[] playerConcealedHand, int meldType);
 
     public void Sort(Tiles[] arr){
         for(int i = 1; i < arr.length; i++){
@@ -65,6 +66,17 @@ public abstract class Tiles {
         return temp;
     }
 
+    public Tiles[][] Add(Tiles[][] arr, Tiles[] num){
+        Tiles[][] temp = new Tiles[arr.length+1][];
+        for(int i = 0; i < arr.length; i++){
+            temp[i] = arr[i];
+        }
+        temp[arr.length] = num;
+        return temp;
+    }
+
+
+    // MAY NOT NEED
     public int[][] Add(int[][] arr, int[] num){
         int[][] temp = new int[arr.length+1][];
         for(int i = 0; i < arr.length; i++){
@@ -89,22 +101,25 @@ public abstract class Tiles {
         return diffBy2;
     }
    
-    public int[][] CheckConsecutive(Tiles[] arr, int num){
+    public Tiles[][] CheckConsecutive(Tiles[] arr, Tiles tileToSearch){
+        int num = tileToSearch.GetNum();
         Tiles[] diffBy2Arr = DiffBy2(arr, num);
-        int[][] consequetiveSets = new int[0][3]; 
+        Tiles[][] consequetiveSets = new Tiles[0][3]; 
         for(int i = 0; i < diffBy2Arr.length-1; i++){
             if(diffBy2Arr[i+1].GetNum()-diffBy2Arr[i].GetNum() == 1){
                 if(diffBy2Arr[i+1].GetNum() < num){
-                    consequetiveSets = Add(consequetiveSets, new int[]{num-2, num-1, num});
-                } else if(diffBy2Arr[i+1].GetNum() > num){
-                    consequetiveSets = Add(consequetiveSets, new int[]{num, num+1, num+2});
+                    consequetiveSets = Add(consequetiveSets, new Tiles[]{diffBy2Arr[i], diffBy2Arr[i+1], tileToSearch});
+                } else if(diffBy2Arr[i].GetNum() > num){
+                    consequetiveSets = Add(consequetiveSets, new Tiles[]{tileToSearch, diffBy2Arr[i], diffBy2Arr[i+1]});
                 }
             }
             if(diffBy2Arr[i+1].GetNum()-diffBy2Arr[i].GetNum() == 2){
-                consequetiveSets = Add(consequetiveSets, new int[]{num-1, num, num+1});
+                consequetiveSets = Add(consequetiveSets, new Tiles[]{diffBy2Arr[i], tileToSearch, diffBy2Arr[i+1]});
             }
         }
         return consequetiveSets;
     }
 
+    abstract public String DisplayTileNum();
+    abstract public String DisplayTileSuit();
 }

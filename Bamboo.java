@@ -17,9 +17,9 @@ public class Bamboo extends Tiles{
             }
         }
 
-        int[][] chowNumCombinations = CheckConsecutive(sameSuit, GetNum());
+        Tiles[][] chowNumCombinations = CheckConsecutive(sameSuit, new Bamboo(GetNum()));
 
-        if(identicalTiles >= 2){
+        if(identicalTiles >= 2 && chowNumCombinations.length > 0){
             return PONG_CHOW_MELD;
         } else if(identicalTiles >= 2){
             return Tiles.PONG_MELD;
@@ -27,11 +27,18 @@ public class Bamboo extends Tiles{
             return Tiles.CHOW_MELD;
         }
 
-        return -1;
+        return Tiles.NO_MELD;
     }
 
     public Tiles[] CheckMeld(Tiles[] playerConcealedHand, int meldType){
         return new Tiles[4];
+    }
+
+    public String DisplayTileNum(){
+        return "|   "+GetNum()+"   ";
+    }
+    public String DisplayTileSuit(){
+        return "|BAMBOO ";
     }
 
 }

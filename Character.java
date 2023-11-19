@@ -19,7 +19,7 @@ public class Character extends Tiles{
             }
         }
 
-        int[][] chowNumCombinations = CheckConsecutive(sameSuit, GetNum());
+        Tiles[][] chowNumCombinations = CheckConsecutive(sameSuit, new Character(GetNum()));
         if(identicalTiles >= 2 && chowNumCombinations.length > 0){
             return PONG_CHOW_MELD;
         } else if(identicalTiles >= 2){
@@ -28,11 +28,35 @@ public class Character extends Tiles{
             return Tiles.CHOW_MELD;
         }
 
-        return -1;
+        return Tiles.NO_MELD;
     }
 
-    public Tiles[] CheckMeld(Tiles[] playerConcealedHand, int meldType){
-        return new Tiles[4];
+    public Tiles[][] CheckMeld(Tiles[] playerConcealedHand, int meldType){
+        Tiles[] temp = {};
+        if(meldType == Tiles.PONG_MELD){
+            for(int i = 0; i < playerConcealedHand.length; i++) {
+               if(playerConcealedHand[i].GetNum() == GetNum() && playerConcealedHand[i].GetSuit() == GetSuit() && temp.length < 3){
+                    temp = Add(temp, playerConcealedHand[i]);
+               }
+            }
+            if(temp.length == 3){
+                return new Tiles[][]{temp};
+            } else return null;
+        } else if(meldType == Tiles.CHOW_MELD){
+            Tiles[] sameSuit = {};
+            for(int i = 0; i < playerConcealedHand.length; i++){
+                if(playerConcealedHand[i] instanceof Character){
+                    sameSuit = Add(sameSuit, playerConcealedHand[i]);   
+                }
+            }
+            return CheckConsecutive(sameSuit, new Character(GetNum()));
+        } else return null;
     }
 
+    public String DisplayTileNum(){
+        return "|   "+GetNum()+"   ";
+    }
+    public String DisplayTileSuit(){
+        return "| CHAR  ";
+    }
 }
