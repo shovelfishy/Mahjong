@@ -7,19 +7,10 @@ public class Honors extends Tiles{
     public final static int WHITE_HONOR  = 6;
     public final static int GREEN_HONOR  = 7;
 
-    private int honorType;
-
     public Honors(int honorType){
-        super(Tiles.HONORS);    
-        this.honorType = honorType;
+        super(Tiles.HONORS, honorType);
     }
 
-    /* JAVA DOC DESC 
-    * @return         - The tile's honor type */
-    public int GetHonorType() {
-        return honorType;
-    }
-    
     /* JAVA DOC DESC 
     * @return         -  */
     public String DisplayTileNum(){
@@ -30,7 +21,7 @@ public class Honors extends Tiles{
     * @return         -  */
     public String DisplayTileSuit(){
         String suit = "";
-        switch(honorType){
+        switch(GetNum()){
             case EAST_HONOR:
                 suit = "| EAST  ";
                 break;

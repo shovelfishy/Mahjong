@@ -20,6 +20,9 @@ public class Player {
     public void SetExposedMelds(Tiles[][] hand){
         this.exposedMelds = hand;
     }
+    public void SetConcealedTiles(Tiles[] hand){
+        this.concealedTiles = hand;
+    }
 
 
     
@@ -166,57 +169,144 @@ public class Player {
         return temp;
     }
 
+    public Tiles[][] Add(Tiles[][] arr, Tiles[] num){
+        Tiles[][] temp = new Tiles[arr.length+1][];
+        for(int i = 0; i < arr.length; i++){
+            temp[i] = arr[i];
+        }
+        temp[arr.length] = num;
+        return temp;
+    }
+
    
-    public int[][] CheckConsecutive(Tiles[] arr, int num){
+    public Tiles[][] CheckConsecutive(Tiles[] arr, Tiles tileToSearch){
+        int num = tileToSearch.GetNum();
         Tiles[] diffBy2Arr = DiffBy2(arr, num);
-        int[][] consequetiveSets = new int[0][3]; 
+        Tiles[][] consequetiveSets = new Tiles[0][3]; 
         for(int i = 0; i < diffBy2Arr.length-1; i++){
             if(diffBy2Arr[i+1].GetNum()-diffBy2Arr[i].GetNum() == 1){
                 if(diffBy2Arr[i+1].GetNum() < num){
-                    consequetiveSets = Add(consequetiveSets, new int[]{num-2, num-1, num});
-                } else if(diffBy2Arr[i+1].GetNum() > num){
-                    consequetiveSets = Add(consequetiveSets, new int[]{num, num+1, num+2});
+                    consequetiveSets = Add(consequetiveSets, new Tiles[]{diffBy2Arr[i], diffBy2Arr[i+1], tileToSearch});
+                } else if(diffBy2Arr[i].GetNum() > num){
+                    consequetiveSets = Add(consequetiveSets, new Tiles[]{tileToSearch, diffBy2Arr[i], diffBy2Arr[i+1]});
                 }
             }
             if(diffBy2Arr[i+1].GetNum()-diffBy2Arr[i].GetNum() == 2){
-                consequetiveSets = Add(consequetiveSets, new int[]{num-1, num, num+1});
+                consequetiveSets = Add(consequetiveSets, new Tiles[]{diffBy2Arr[i], tileToSearch, diffBy2Arr[i+1]});
             }
         }
         return consequetiveSets;
     }
 
-    public boolean CheckWinningHand(Tiles[] arr, int meld){
-        for (Tiles tiles : arr) {
-            System.out.println(tiles.GetNum());
+    public int CheckMeld(Tiles tile){
+        int identicalTiles = 0;
+        
+        Tiles[] sameSuit = {};
+        for(int i = 0; i < concealedTiles.length; i++){
+            if(concealedTiles[i].GetSuit() == tile.GetSuit()){
+                if(concealedTiles[i].GetNum() == tile.GetNum()){
+                    identicalTiles++;
+                }
+                sameSuit = Add(sameSuit, concealedTiles[i]);   
+            }
         }
-        System.out.println();
 
-        if(arr.length == 0){
-            return true;
-        } else if (meld == Tiles.CHOW_MELD){
-            Tiles tile = arr[0];
-            Tiles[][] chowMelds = tile.CheckMeld(arr, Tiles.CHOW_MELD);
-            for (int i = 0; chowMelds!=null && i < chowMelds.length; i++) {
-                System.out.println(i+"E"+chowMelds.length);
-                if(CheckWinningHand(Remove(arr, chowMelds[i]), Tiles.PONG_MELD)){
+        Tiles[][] chowNumCombinations = CheckConsecutive(sameSuit, tile);
+        if(identicalTiles >= 2 && chowNumCombinations.length > 0){
+            return Tiles.PONG_CHOW_MELD;
+        } else if(identicalTiles >= 2){
+            return Tiles.PONG_MELD;
+        } else if(chowNumCombinations.length > 0){
+            return Tiles.CHOW_MELD;
+        }
+
+        return Tiles.NO_MELD;
+    }
+
+    public Tiles[][] CheckMeld(Tiles[] tilesArr, Tiles tile, int meldType){
+        if(meldType == Tiles.PONG_MELD){
+            Tiles[] temp = {};
+            for(int i = 0; i < tilesArr.length; i++) {
+               if(tilesArr[i].GetNum() == tile.GetNum() && tilesArr[i].GetSuit() == tile.GetSuit() && temp.length < 3){
+                    temp = Add(temp, tilesArr[i]);
+               }
+            }
+            if(temp.length == 3){
+                return new Tiles[][]{temp};
+            }
+        } else if(meldType == Tiles.CHOW_MELD){
+            Tiles[] sameSuit = {};
+            for(int i = 0; i < tilesArr.length; i++){
+                if(tilesArr[i].GetSuit() == tile.GetSuit()){
+                    sameSuit = Add(sameSuit, tilesArr[i]);   
+                }
+            }
+            Tiles[][] chowMelds = CheckConsecutive(sameSuit, tile);
+            if(chowMelds.length!=0){
+                return chowMelds;
+            }
+        }
+        return null;
+    }
+
+    public boolean CheckWinningHand(){
+        for (int i = 0; i < concealedTiles.length; i++) {
+            Tiles[] eye = CheckEye(concealedTiles, concealedTiles[i]);
+            if(eye!=null){
+                Tiles[] restOfTiles = Remove(concealedTiles, eye);
+                boolean IsAllMelds = IsAllMelds(restOfTiles, Tiles.CHOW_MELD, 0);
+                if(IsAllMelds){
                     return true;
                 }
             }
-        } else {
-            Tiles tile = arr[0];
-            Tiles[][] pongMelds = tile.CheckMeld(arr, Tiles.PONG_MELD);
-            if(pongMelds!=null){
-                return CheckWinningHand(Remove(arr, pongMelds[0]), Tiles.PONG_MELD);
+        }
+        return false;
+    }
+
+    public Tiles[] CheckEye(Tiles[] tilesArr, Tiles tile){
+            Tiles[] temp = {};
+            for(int i = 0; i < tilesArr.length; i++) {
+               if(tilesArr[i].GetNum() == tile.GetNum() && tilesArr[i].GetSuit() == tile.GetSuit() && temp.length < 2){
+                    temp = Add(temp, tilesArr[i]);
+               }
             }
-            return false;
+            if(temp.length == 2){
+                return temp;
+            }
+            return null;
+    }
+
+    public boolean IsAllMelds(Tiles[] arr, int meld, int start){
+        if(start >= arr.length){
+            return arr.length == 0;
+        } else if(meld == Tiles.CHOW_MELD){
+            Tiles[][] chowMelds = CheckMeld(arr, arr[start], Tiles.CHOW_MELD);
+            for (int i = 0; chowMelds!=null && i < chowMelds.length; i++) {
+                if(IsAllMelds (Remove(arr, chowMelds[i]), Tiles.CHOW_MELD, 0)){
+                    return true;
+                }
+                if(IsAllMelds (Remove(arr, chowMelds[i]), Tiles.PONG_MELD, 0)){
+                    return true;
+                }
+            }
+            if(IsAllMelds (arr, Tiles.CHOW_MELD, start+1)){
+                return true;
+            }
+            if(IsAllMelds (arr, Tiles.PONG_MELD, start)){
+                return true;
+            }
+        } else if(meld == Tiles.PONG_MELD){
+            Tiles[][] pongMelds = CheckMeld(arr, arr[start], Tiles.PONG_MELD);
+            if(pongMelds != null){
+                return IsAllMelds (Remove(arr, pongMelds[0]), Tiles.PONG_MELD, start);
+            }
         }
         return false;
     }
 
     public Tiles[] Remove(Tiles[] arr, Tiles[] tilesToRemove){
-        arr = copyTiles(arr);
         Tiles[] temp = new Tiles[arr.length-tilesToRemove.length];
-        int counter = 0;
+        arr = copyTiles(arr);
         for (int i = 0; i < tilesToRemove.length; i++) {
             Tiles currElement = tilesToRemove[i]; 
             for (int j = 0; j < arr.length; j++) {
@@ -226,6 +316,7 @@ public class Player {
                 }
             }
         }
+        int counter = 0;
         for (int i = 0; i < arr.length; i++) {
             if(arr[i] != null){
                 temp[counter] = arr[i];

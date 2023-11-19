@@ -11,26 +11,15 @@ public class MahjongMain {
         me.SetLiveDiscard(new Bamboo(9));
 
 
-        Tiles[] a= {new Character(1), new Character(2),new Character(3),new Character(4),new Character(1),new Character(1)};
-        Tiles[] n= {new Character(1), new Character(2),new Character(3),new Character(4),new Character(1)};
+        Tiles[] a = {new Character(2),new Character(2),new Character(2),new Dot(7),new Dot(7),new Dot(7),new Character(4),new Character(5),new Character(3),new Bamboo(6),new Bamboo(7),new Bamboo(8),new Honors(Honors.WHITE_HONOR),new Honors(Honors.GREEN_HONOR)};
         Player player = new Player(0, null);
+        player.SetConcealedTiles(a);
+
+        System.out.println(player.CheckWinningHand());
+
+        Tiles[] winHand = {new Character(2),new Character(2),new Character(2),new Dot(7),new Dot(7),new Dot(7),new Character(4),new Character(5),new Character(3),new Bamboo(6),new Bamboo(7),new Bamboo(8),new Honors(Honors.EAST_HONOR),new Honors(Honors.EAST_HONOR)};
         
-        // Tiles[] a= {new Character(1), new Character(2),new Character(3),new Character(2),new Character(3)};
-
-        Tiles tile = new Character(1);
-        Tiles[][] t = tile.CheckMeld(a, Tiles.CHOW_MELD);
-        for (Tiles[] tiles : t) {
-            for (Tiles tiles2 : tiles) {
-                
-                System.out.println(tiles2.GetNum());
-            }
-        }
-        // System.out.println(player.CheckWinningHand(a, Tiles.CHOW_MELD));
-
-
-        Tiles[] winHand = {new Character(2),new Character(2),new Character(2),new Dot(7),new Dot(7),new Dot(7),new Character(4),new Character(5),new Character(3),new Bamboo(6),new Bamboo(7),new Bamboo(8),new Honors(Honors.EAST_HONOR),new Bamboo(Honors.EAST_HONOR)};
-        
-        Tiles[] NOTwinHand = {new Character(2),new Character(2),new Character(2),new Dot(7),new Dot(7),new Dot(7),new Character(4),new Character(5),new Character(3),new Bamboo(6),new Bamboo(7),new Bamboo(8),new Honors(Honors.EAST_HONOR),new Bamboo(Honors.WEST_HONOR)};
+        Tiles[] NOTwinHand = {new Character(2),new Character(2),new Character(2),new Dot(7),new Dot(7),new Dot(7),new Character(4),new Character(5),new Character(3),new Bamboo(6),new Bamboo(7),new Bamboo(8),new Honors(Honors.EAST_HONOR),new Honors(Honors.WEST_HONOR)};
 
         
         
