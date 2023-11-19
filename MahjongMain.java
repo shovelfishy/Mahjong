@@ -1,6 +1,13 @@
 import java.util.Arrays;
 import java.util.Scanner;
 
+/*TO-DO
+         * 1. choose to discard, arrange tiles, or end turn
+         * 2. pong, chow, or mahjong
+         * 3. win screen, draw screen, lose screen (if someone accidentlaly mahjongs wrongly)
+         * 4. tutorial
+        */
+
 public class MahjongMain {
 
     public static void main(String[] args) {
@@ -8,56 +15,75 @@ public class MahjongMain {
         Displayer disp = new Displayer(me);
         Scanner input = new Scanner(System.in);
         boolean TEST = false;
-        me.SetLiveDiscard(new Bamboo(9));
 
 
-        Tiles[] a = {new Character(2),new Character(2),new Character(2),new Dot(7),new Dot(7),new Dot(7),new Character(4),new Character(5),new Character(3),new Bamboo(6),new Bamboo(7),new Bamboo(8),new Honors(Honors.WHITE_HONOR),new Honors(Honors.GREEN_HONOR)};
-        Player player = new Player(0, null);
-        player.SetConcealedTiles(a);
-
-        System.out.println(player.CheckWinningHand());
-
-        Tiles[] winHand = {new Character(2),new Character(2),new Character(2),new Dot(7),new Dot(7),new Dot(7),new Character(4),new Character(5),new Character(3),new Bamboo(6),new Bamboo(7),new Bamboo(8),new Honors(Honors.EAST_HONOR),new Honors(Honors.EAST_HONOR)};
-        
-        Tiles[] NOTwinHand = {new Character(2),new Character(2),new Character(2),new Dot(7),new Dot(7),new Dot(7),new Character(4),new Character(5),new Character(3),new Bamboo(6),new Bamboo(7),new Bamboo(8),new Honors(Honors.EAST_HONOR),new Honors(Honors.WEST_HONOR)};
-
-        
-        
-
-        if(TEST){
-
-            // me.player1.SetExposedMelds(new Tiles[][]{{new Character(1),new Character(1),new Character(1)},{new Dot(5),new Dot(6),new Dot(7)},{new Character(1),new Character(1),new Character(1)}});
-            // me.player2.SetExposedMelds(new Tiles[][]{{new Character(1),new Character(1),new Character(1)},{new Dot(5),new Dot(6),new Dot(7)},{new Character(1),new Character(1),new Character(1)}});
-            // me.player3.SetExposedMelds(new Tiles[][]{{new Character(1),new Character(1),new Character(1)}});
-            // me.player4.SetExposedMelds(new Tiles[][]{{new Character(9),new Character(2),new Character(2)},{new Character(9),new Character(2),new Character(2)}});
+        if(true){
     
             me.DrawTile();
             disp.DisplayBoard(me.GetCurrPlayer());
-    
-    
-            System.out.print("Select which tile to discard: ");
-            int pos = input.nextInt();
-            me.DiscardTile(me.GetCurrPlayer(), pos);
-            disp.DisplayBoard(me.GetCurrPlayer());
-            input.nextLine();
-    
+            System.out.println();
+            
+            boolean hasDiscarded = false;
             while(true){
-                System.out.print("Arrange tiles: ");
-                String arrangePos = input.nextLine().toLowerCase();
-                String[] splitPos = arrangePos.split(" ");
-    
-                if(arrangePos.equals("0")){
-                    break;
-                } else if(arrangePos.equals("v")) {
+                int[] availableOptions = {1,2,3,4,5};
+
+                System.out.println("What would you like to do? ");
+                if(!hasDiscarded){
+                    System.out.println("1. Discard tile");
+                    System.out.println("2. Arrange tiles");
+                    System.out.println("3. Chow");
+                    System.out.println("4. Mahjong");
+                    System.out.println("5. End turn");
+                } else{
+                    System.out.println("1. Arrange tiles");
+                    System.out.println("2. Chow");
+                    System.out.println("3. Mahjong");
+                    System.out.println("4. End turn");
+                    availableOptions = new int[]{-1,1,2,3,4};
+                }
+                System.out.print("Select option: ");
+                int option = input.nextInt();
+                input.nextLine();
+                if(!hasDiscarded && option == availableOptions[0]){
+                    System.out.print("Select which tile position to discard: ");
+                    int pos = input.nextInt();
+                    me.DiscardTile(me.GetCurrPlayer(), pos);
+                    hasDiscarded = true;
                     disp.DisplayBoard(me.GetCurrPlayer());
-                } else if(splitPos.length == 2){
-                    int pos1 = Integer.parseInt(splitPos[0])-1;
-                    int pos2 = Integer.parseInt(splitPos[1])-1;
-                    me.GetCurrPlayer().ArrangeHand(pos1, pos2);
+                } else if(option == availableOptions[1]){
+                    while(true){
+                        System.out.print("Arrange tiles (0: quit, v: view): ");
+                        String arrangePos = input.nextLine().toLowerCase();
+                        String[] splitPos = arrangePos.split(" ");
+            
+                        if(arrangePos.equals("0")){
+                            break;
+                        } else if(arrangePos.equals("v")) {
+                            disp.DisplayBoard(me.GetCurrPlayer());
+                        } else if(splitPos.length == 2){
+                            int pos1 = Integer.parseInt(splitPos[0])-1;
+                            int pos2 = Integer.parseInt(splitPos[1])-1;
+                            me.GetCurrPlayer().ArrangeHand(pos1, pos2);
+                        } else{
+                            System.out.println("ERROR: Invalid input\n");
+                        }
+                    }
+                } else if(option == availableOptions[2]){
+                    
+                } else if(option == availableOptions[3]){
+                    
+                } else if(option == availableOptions[4]){
+                    if(hasDiscarded){
+                        System.out.println(disp.displayPlayer(me.GetCurrPlayer().GetWind())+" has ended their turn");
+                        break;
+                    } else{
+                        System.out.println("ERROR: You must discard a tile before ending your turn");
+                    }
                 } else{
                     System.out.println("ERROR: Invalid input");
                 }
             }
+    
     
             disp.DisplayBoard(me.GetCurrPlayer());
         }

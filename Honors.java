@@ -20,30 +20,23 @@ public class Honors extends Tiles{
     /* JAVA DOC DESC 
     * @return         -  */
     public String DisplayTileSuit(){
-        String suit = "";
         switch(GetNum()){
             case EAST_HONOR:
-                suit = "| EAST  ";
-                break;
+                return "| EAST  ";
             case SOUTH_HONOR:
-                suit = "| SOUTH ";
-                break;
+                return "| SOUTH ";
             case WEST_HONOR:
-                suit = "| WEST  ";
-                break;
+                return "| WEST  ";
             case NORTH_HONOR:
-                suit = "| NORTH ";
-                break;
+                return "| NORTH ";
             case RED_HONOR:
-                suit = "|  RED  ";
-                break;
+                return "|  RED  ";
             case WHITE_HONOR:
-                suit = "| WHITE ";
-                break;
+                return "| WHITE ";
             case GREEN_HONOR:
-                suit = "| GREEN ";
-                break;
+                return "| GREEN ";
+            default:
+                return null;
         }
-        return suit;
     }
 }

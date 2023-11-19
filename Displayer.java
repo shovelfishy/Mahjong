@@ -14,7 +14,7 @@ public class Displayer {
     /* JAVA DOC DESC 
     * @param PARAM NAME      - 
     * @return         -  */
-    private String displayPlayer(int wind){
+    public String displayPlayer(int wind){
         switch(wind){
             case Player.EAST_WIND:
                 return "EAST PLAYER";

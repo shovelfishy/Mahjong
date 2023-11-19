@@ -40,9 +40,6 @@ public abstract class Tiles {
     public void SetOwner(Player owner) {
         this.owner = owner;
     }
-    
-    public abstract int CheckMeld(Tiles[] playerConcealedHand);
-    public abstract Tiles[][] CheckMeld(Tiles[] playerConcealedHand, int meldType);
 
     abstract public String DisplayTileNum();
     abstract public String DisplayTileSuit();
