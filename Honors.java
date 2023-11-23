@@ -13,13 +13,13 @@ public class Honors extends Tiles{
 
     /* JAVA DOC DESC 
     * @return         -  */
-    public String DisplayTileNum(){
+    public String DisplayTileSuit(){
         return "|HONORS ";
     }
 
     /* JAVA DOC DESC 
     * @return         -  */
-    public String DisplayTileSuit(){
+    public String DisplayTileNum(){
         switch(GetNum()){
             case EAST_HONOR:
                 return "| EAST  ";

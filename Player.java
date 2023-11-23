@@ -1,22 +1,18 @@
 public class Player {
 
     // GLOBAL CONSTANTS: PLAYER SEAT WINDS
-    public static final int EAST_WIND = 100;
-    public static final int SOUTH_WIND = 101;
-    public static final int WEST_WIND = 102;
-    public static final int NORTH_WIND = 103;
+    public final static int EAST_WIND = 100;
+    public final static int SOUTH_WIND = 101;
+    public final static int WEST_WIND = 102;
+    public final static int NORTH_WIND = 103;
 
     // Private variables
     private int wind;
     private Tiles[][] exposedMelds;
     private Tiles[] concealedTiles;
-    private Tiles[] hand;
+    private boolean isPlaying;
 
     //TESTING
-    public void SetHand(Tiles[] hand){
-        this.hand = hand;
-        this.concealedTiles = hand;
-    }
     public void SetExposedMelds(Tiles[][] hand){
         this.exposedMelds = hand;
     }
@@ -24,33 +20,13 @@ public class Player {
         this.concealedTiles = hand;
     }
 
-
-    
-
-    public Player(int wind, Tiles[] hand){
-        this.wind = wind;
-        this.hand = hand;
-        this.concealedTiles = hand;
-        this.exposedMelds = new Tiles[0][];
-    }
-
-    // public boolean CheckWinningHand(){
-    //     int completedMelds = concealedTiles.length;
-    // }
-
-    public void ArrangeHand(int pos1, int pos2){
-        Tiles temp = concealedTiles[pos1];
-
-        if(pos1 > pos2){
-            for(int i = pos1; i > pos2; i--){
-                concealedTiles[i] = concealedTiles[i-1];
-            }
-        } else{
-            for(int i = pos1; i < pos2; i++){
-                concealedTiles[i] = concealedTiles[i+1];
-            }
+    public Tiles[][] Add(Tiles[][] arr, Tiles[] tiles){
+        Tiles[][] temp = new Tiles[arr.length+1][];
+        for(int i = 0; i < arr.length; i++){
+            temp[i] = arr[i];
         }
-        concealedTiles[pos2] = temp;
+        temp[arr.length] = tiles;
+        return temp;
     }
 
     public Tiles[] Add(Tiles[] arr, Tiles newTile){
@@ -76,8 +52,6 @@ public class Player {
         return temp;
     }
 
-
-
     public Tiles[] Remove(Tiles[] arr, Tiles tile){
         // Swap the tile in their concealed hand
         // The concealedTiles array does not have the same indices as the hand array
@@ -92,15 +66,95 @@ public class Player {
         return temp;
     }
 
+    public Tiles[] Remove(Tiles[] arr, Tiles[] tilesToRemove){
+        Tiles[] temp = new Tiles[arr.length-tilesToRemove.length];
+        arr = copyTiles(arr);
+        for (int i = 0; i < tilesToRemove.length; i++) {
+            Tiles currElement = tilesToRemove[i]; 
+            for (int j = 0; j < arr.length; j++) {
+                if(arr[j] != null && arr[j].GetSuit() == currElement.GetSuit() && arr[j].GetNum() == currElement.GetNum()){
+                    arr[j] = null;
+                    break;
+                }
+            }
+        }
+        int counter = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if(arr[i] != null){
+                temp[counter] = arr[i];
+                counter++;
+            }
+        }
+        return temp;
+    }
+
+
+    /* JAVA DOC DESC 
+    * @param PARAM NAME      - 
+    * @return         -  */
+    public String DisplayPlayer(){
+        switch(wind){
+            case Player.EAST_WIND:
+                return "EAST PLAYER";
+            case Player.SOUTH_WIND:
+                return "SOUTH PLAYER";
+            case Player.WEST_WIND:
+                return "WEST PLAYER";
+            case Player.NORTH_WIND:
+                return "NORTH PLAYER";
+            default:
+                return null;
+        }
+    }
+
+    public Player(int wind, Tiles[] hand){
+        this.wind = wind;
+        this.concealedTiles = hand;
+        this.exposedMelds = new Tiles[0][];
+        this.isPlaying = true;
+    }
+
+    public void ArrangeHand(int pos1, int pos2){
+        Tiles temp = concealedTiles[pos1];
+
+        if(pos1 > pos2){
+            for(int i = pos1; i > pos2; i--){
+                concealedTiles[i] = concealedTiles[i-1];
+            }
+        } else{
+            for(int i = pos1; i < pos2; i++){
+                concealedTiles[i] = concealedTiles[i+1];
+            }
+        }
+        concealedTiles[pos2] = temp;
+    }
+
+    public void AutoSortHand(){
+        Tiles[] temp = new Tiles[0];
+        int[] suits = {Tiles.BAMBOO, Tiles.CHARACTER, Tiles.DOT, Tiles.HONORS};
+        for(int i = 0; i < suits.length; i++){
+            Tiles[] singleSuitTiles = new Tiles[0];
+            for (int j = 0; j < concealedTiles.length; j++) {
+                if(concealedTiles[j].GetSuit() == suits[i]){
+                    singleSuitTiles = Add(singleSuitTiles, concealedTiles[j]);
+                }
+            }
+            Sort(singleSuitTiles);
+            for (int j = 0; j < singleSuitTiles.length; j++) {
+                temp = Add(temp, singleSuitTiles[j]);
+            }
+        }
+        concealedTiles = temp;
+    }
+
+
     public void AddTile(Tiles newTile){
-        hand = Add(hand, newTile);
         concealedTiles = Add(concealedTiles, newTile);
     }
 
     public Tiles DiscardTile(int pos){
         Tiles oldTile = concealedTiles[pos];
         concealedTiles = Remove(concealedTiles, pos);
-        hand = Remove(hand, pos);
 
         return oldTile;
     }
@@ -114,15 +168,16 @@ public class Player {
     public Tiles[] GetConcealedTiles() {
         return concealedTiles;
     }
-    public Tiles[] GetHand() {
-        return hand;
+    public boolean GetIsPlaying() {
+        return isPlaying;
     }
 
+    public void Disqualify(){
+        exposedMelds = new Tiles[0][0];
+        concealedTiles = new Tiles[0];
+        isPlaying = false;
+    }
 
-
-
-
-    
     public void Sort(Tiles[] arr){
         for(int i = 1; i < arr.length; i++){
             Tiles currElement = arr[i];
@@ -136,15 +191,35 @@ public class Player {
         }
     }
 
-
-    public int[][] Add(int[][] arr, int[] num){
-        int[][] temp = new int[arr.length+1][];
-        for(int i = 0; i < arr.length; i++){
-            temp[i] = arr[i];
+    public Tiles[] PossibleChowTiles(Tiles tile){
+        Tiles[] temp = {};
+        for (int i = 0; i < concealedTiles.length; i++) {
+            if(concealedTiles[i].GetSuit() == tile.GetSuit()){
+                temp = Add(temp, concealedTiles[i]);
+            }
         }
-        temp[arr.length] = num;
+
+        Tiles[] possibleTiles = DiffBy2(temp, tile.GetNum());
+        temp = new Tiles[0];
+        for (int i = 0; i < possibleTiles.length-1; i++) {
+            if(!possibleTiles[i].Equals(possibleTiles[i+1])){
+                temp = Add(temp, possibleTiles[i]);
+            }
+        }
+        temp = Add(temp, possibleTiles[possibleTiles.length-1]);
         return temp;
     }
+
+    public Tiles[] PossiblePongTiles(Tiles tile){
+        Tiles[] temp = {};
+        for (int i = 0; i < concealedTiles.length; i++) {
+            if(concealedTiles[i].Equals(tile)){
+                temp = Add(temp, concealedTiles[i]);
+            }
+        }
+        return temp;
+    }
+
 
     public Tiles[] DiffBy2(Tiles[] arr, int num){
         Tiles[] diffBy2 = new Tiles[0];
@@ -168,16 +243,6 @@ public class Player {
         }
         return temp;
     }
-
-    public Tiles[][] Add(Tiles[][] arr, Tiles[] num){
-        Tiles[][] temp = new Tiles[arr.length+1][];
-        for(int i = 0; i < arr.length; i++){
-            temp[i] = arr[i];
-        }
-        temp[arr.length] = num;
-        return temp;
-    }
-
    
     public Tiles[][] CheckConsecutive(Tiles[] arr, Tiles tileToSearch){
         int num = tileToSearch.GetNum();
@@ -223,11 +288,24 @@ public class Player {
         return Tiles.NO_MELD;
     }
 
+    public void ExposeMeld(Tiles tile1, int pos1, int pos2){
+        Tiles[] meld = {tile1, concealedTiles[pos1], concealedTiles[pos2]};
+        if(pos1 > pos2){
+            concealedTiles = Remove(concealedTiles, pos1);
+            concealedTiles = Remove(concealedTiles, pos2);
+        } else if(pos2 > pos1){
+            concealedTiles = Remove(concealedTiles, pos2);
+            concealedTiles = Remove(concealedTiles, pos1);
+        } 
+        Sort(meld);
+        exposedMelds = Add(exposedMelds, meld);
+    }
+
     public Tiles[][] CheckMeld(Tiles[] tilesArr, Tiles tile, int meldType){
         if(meldType == Tiles.PONG_MELD){
             Tiles[] temp = {};
             for(int i = 0; i < tilesArr.length; i++) {
-               if(tilesArr[i].GetNum() == tile.GetNum() && tilesArr[i].GetSuit() == tile.GetSuit() && temp.length < 3){
+               if(tilesArr[i].Equals(tile) && temp.length < 3){
                     temp = Add(temp, tilesArr[i]);
                }
             }
@@ -254,7 +332,7 @@ public class Player {
             Tiles[] eye = CheckEye(concealedTiles, concealedTiles[i]);
             if(eye!=null){
                 Tiles[] restOfTiles = Remove(concealedTiles, eye);
-                boolean IsAllMelds = IsAllMelds(restOfTiles, Tiles.CHOW_MELD, 0);
+                boolean IsAllMelds = IsHandAllMelds(restOfTiles, Tiles.CHOW_MELD, 0);
                 if(IsAllMelds){
                     return true;
                 }
@@ -266,7 +344,7 @@ public class Player {
     public Tiles[] CheckEye(Tiles[] tilesArr, Tiles tile){
             Tiles[] temp = {};
             for(int i = 0; i < tilesArr.length; i++) {
-               if(tilesArr[i].GetNum() == tile.GetNum() && tilesArr[i].GetSuit() == tile.GetSuit() && temp.length < 2){
+               if(tilesArr[i].Equals(tile) && temp.length < 2){
                     temp = Add(temp, tilesArr[i]);
                }
             }
@@ -276,53 +354,31 @@ public class Player {
             return null;
     }
 
-    public boolean IsAllMelds(Tiles[] arr, int meld, int start){
+    public boolean IsHandAllMelds(Tiles[] arr, int meld, int start){
         if(start >= arr.length){
             return arr.length == 0;
         } else if(meld == Tiles.CHOW_MELD){
             Tiles[][] chowMelds = CheckMeld(arr, arr[start], Tiles.CHOW_MELD);
             for (int i = 0; chowMelds!=null && i < chowMelds.length; i++) {
-                if(IsAllMelds (Remove(arr, chowMelds[i]), Tiles.CHOW_MELD, 0)){
+                if(IsHandAllMelds(Remove(arr, chowMelds[i]), Tiles.CHOW_MELD, 0)){
                     return true;
                 }
-                if(IsAllMelds (Remove(arr, chowMelds[i]), Tiles.PONG_MELD, 0)){
+                if(IsHandAllMelds(Remove(arr, chowMelds[i]), Tiles.PONG_MELD, 0)){
                     return true;
                 }
             }
-            if(IsAllMelds (arr, Tiles.CHOW_MELD, start+1)){
+            if(IsHandAllMelds(arr, Tiles.CHOW_MELD, start+1)){
                 return true;
             }
-            if(IsAllMelds (arr, Tiles.PONG_MELD, start)){
+            if(IsHandAllMelds(arr, Tiles.PONG_MELD, start)){
                 return true;
             }
         } else if(meld == Tiles.PONG_MELD){
             Tiles[][] pongMelds = CheckMeld(arr, arr[start], Tiles.PONG_MELD);
             if(pongMelds != null){
-                return IsAllMelds (Remove(arr, pongMelds[0]), Tiles.PONG_MELD, start);
+                return IsHandAllMelds(Remove(arr, pongMelds[0]), Tiles.PONG_MELD, start);
             }
         }
         return false;
-    }
-
-    public Tiles[] Remove(Tiles[] arr, Tiles[] tilesToRemove){
-        Tiles[] temp = new Tiles[arr.length-tilesToRemove.length];
-        arr = copyTiles(arr);
-        for (int i = 0; i < tilesToRemove.length; i++) {
-            Tiles currElement = tilesToRemove[i]; 
-            for (int j = 0; j < arr.length; j++) {
-                if(arr[j] != null && arr[j].GetSuit() == currElement.GetSuit() && arr[j].GetNum() == currElement.GetNum()){
-                    arr[j] = null;
-                    break;
-                }
-            }
-        }
-        int counter = 0;
-        for (int i = 0; i < arr.length; i++) {
-            if(arr[i] != null){
-                temp[counter] = arr[i];
-                counter++;
-            }
-        }
-        return temp;
     }
 }
