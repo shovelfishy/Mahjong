@@ -39,4 +39,14 @@ public class Honors extends Tiles{
                 return null;
         }
     }
+
+    public int CalcPoints(int meldType){
+        switch(meldType){
+            case Tiles.PONG_MELD:
+                return 120;
+            case Tiles.NO_MELD:
+                return 30;
+        }
+        return 0;
+    }   
 }

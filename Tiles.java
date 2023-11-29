@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public abstract class Tiles {
 
     
@@ -7,8 +5,7 @@ public abstract class Tiles {
     public static final int NO_MELD = -200;
     public static final int PONG_MELD = 200;
     public static final int CHOW_MELD = 201;
-    public static final int EYE_PAIR = 202;
-    public static final int PONG_CHOW_MELD = 203;
+    public static final int PONG_CHOW_MELD = 202;
 
     // GLOBAL CONSTANTS: TILE TYPES
     public static final int BAMBOO = 400;
@@ -19,7 +16,6 @@ public abstract class Tiles {
     // Private variables
     private int suit;
     private int numerical;
-    private Player owner;
 
     public Tiles(int suit){
         this.suit = suit;
@@ -38,14 +34,6 @@ public abstract class Tiles {
         return numerical;
     }
 
-    public Player GetOwner() {
-        return owner;
-    }
-
-    public void SetOwner(Player owner) {
-        this.owner = owner;
-    }
-
     public boolean Equals(Tiles tile){
         if(tile.GetNum() == numerical && tile.GetSuit() == suit){
             return true;
@@ -55,4 +43,5 @@ public abstract class Tiles {
 
     abstract public String DisplayTileNum();
     abstract public String DisplayTileSuit();
+    abstract public int CalcPoints(int meldType);
 }

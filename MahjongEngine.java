@@ -19,81 +19,8 @@ public class MahjongEngine {
     private Tiles liveDiscard;
     private Player currPlayer;
     
-    // TESTING
-    public void SetLiveDiscard(Tiles tile){
-        liveDiscard = tile;
-    }
 
-
-
-    
-    private int random(int min, int max){
-        return (int)Math.round(Math.random()*(max-min)+min);
-    } 
-
-    private Tiles[] remove(Tiles[] arr, int index){
-        Tiles[] newArr = new Tiles[arr.length-1];
-
-        int counter = 0;
-        for(int i = 0; i < arr.length; i++){
-            if(i != index){
-                newArr[counter] = arr[i];
-                counter++;
-            }
-        }
-        return newArr; 
-    }
-
-    private Tiles[] DealTiles(int numTiles){
-        Tiles[] hand = new Tiles[numTiles];
-        for(int i=0; i < numTiles; i++){
-            int index = random(0, wall.length-1);
-            Tiles tile = wall[index];
-            hand[i] = tile;
-            wall = remove(wall, index);
-        }
-        return hand;
-    }
-
-    private Tiles[] meldOptions(Player player, int meldType){
-        if(meldType == Tiles.PONG_MELD){
-            return player.PossiblePongTiles(liveDiscard);
-        } else if(meldType == Tiles.CHOW_MELD){
-            return player.PossibleChowTiles(liveDiscard);
-        }
-        return null;
-    }
-    
-    private int relativePlayerPos(Player startPlayer, Player relativePlayer){
-        int startPlayerIndex = FindPlayerIndex(startPlayer, currentlyPlaying());
-        int relativePlayerIndex = FindPlayerIndex(relativePlayer, currentlyPlaying());
-        if(Math.floorMod(relativePlayerIndex-1, currentlyPlaying().length) == startPlayerIndex){
-            return Tiles.PONG_CHOW_MELD;
-        } else{
-            return INCORRECT_POSITION;
-        }
-    }
-
-    private Player[] currentlyPlaying(){
-        int numPlaying = 0;
-        for (int i = 0; i < players.length; i++) {
-            if(players[i].GetIsPlaying()){
-                numPlaying++;
-            }
-        }
-
-        Player[] temp = new Player[numPlaying];
-        int counter = 0;
-        for (int i = 0; i < players.length; i++) {
-            if(players[i].GetIsPlaying()){
-                temp[counter] = players[i];
-                counter++;
-            }
-        }
-        
-        return temp;
-    }
-
+    //=================== CONSTRUCTOR =====================//
     public MahjongEngine(){
         wall = new Tiles[136];
 
@@ -135,6 +62,88 @@ public class MahjongEngine {
         players = new Player[]{player1, player2, player3, player4};
     }
 
+
+    //================== PRIVATE METHODS ====================//
+
+    // DEVELOPED BY: DANIEL
+    /* Generates a random number between a range
+    * @param min      - Lower bound of the random number
+    * @param max      - Upper bound of the random number
+    * @return         - Random number between the min and max number*/
+    private int random(int min, int max){
+        return (int)Math.round(Math.random()*(max-min)+min);
+    } 
+
+    // DEVELOPED BY: DANIEL
+    /* Removes the Tile stored at an index in a Tiles array
+    * @param arr        - The Tiles array from which to remove the Tile from
+    * @param index      - Index of Tile to be removed
+    * @return           - New array with the Tile at specified index removed*/
+    private Tiles[] remove(Tiles[] arr, int index){
+        Tiles[] newArr = new Tiles[arr.length-1];
+
+        // Loops through arr and copies Tiles to newArr unless loop counter equals index
+        int counter = 0;
+        for(int i = 0; i < arr.length; i++){
+            if(i != index){
+                newArr[counter] = arr[i];
+                counter++;
+            }
+        }
+        return newArr; 
+    }
+
+    // DEVELOPED BY: DANIEL
+    /* Creates an array with a specified amount of spaces filled with Tiles dealt from the wall
+    * @param numTiles      - The number of Tiles to be dealt
+    * @return              - An array with the Tiles dealt from the wall*/
+    private Tiles[] DealTiles(int numTiles){
+        Tiles[] hand = new Tiles[numTiles];
+
+        // Add a random tile from the wall each iteration
+        for(int i=0; i < numTiles; i++){
+            int index = random(0, wall.length-1); // Get a random index between 0 and the last index of wall array
+            hand[i] = wall[index]; // Add Tile from wall to the hand
+            wall = remove(wall, index); // Remove Tile from the wall
+        }
+        return hand;
+    }
+
+    // DEVELOPED BY: EDWARD
+    /* Creates an array with a specified amount of spaces filled with Tiles dealt from the wall
+    * @param numTiles      - The number of Tiles to be dealt
+    * @return              - An array with the Tiles dealt from the wall*/
+    private Tiles[] meldOptions(Player player, int meldType){
+        if(meldType == Tiles.PONG_MELD){
+            return player.PossiblePongTiles(liveDiscard);
+        } else if(meldType == Tiles.CHOW_MELD){
+            return player.PossibleChowTiles(liveDiscard);
+        }
+        return null;
+    }
+    
+    //================== PUBLIC METHODS ====================//
+
+    public Player[] CurrentlyPlaying(){
+        int numPlaying = 0;
+        for (int i = 0; i < players.length; i++) {
+            if(players[i].GetIsPlaying()){
+                numPlaying++;
+            }
+        }
+
+        Player[] temp = new Player[numPlaying];
+        int counter = 0;
+        for (int i = 0; i < players.length; i++) {
+            if(players[i].GetIsPlaying()){
+                temp[counter] = players[i];
+                counter++;
+            }
+        }
+        
+        return temp;
+    }
+
     public Tiles DrawTile(){
         int index = random(0, wall.length-1);
         Tiles tile = wall[index];
@@ -153,7 +162,7 @@ public class MahjongEngine {
     public int IsGameOver(){
         if(wall.length == 0){
             return EMPTY_WALL;
-        } else if(currentlyPlaying().length == 1){
+        } else if(CurrentlyPlaying().length <= 1){
             return NO_PLAYERS;
         }
         return -1;
@@ -178,7 +187,7 @@ public class MahjongEngine {
         // Find index of current player in players array (see MahjongEngine) to use in calculation 
         int playerIndex = 0;
         for(int i = 0; i < players.length; i++){
-            if(GetPlayers()[i] == player) playerIndex = i;
+            if(players[i] == player) playerIndex = i;
         }
         return playerIndex;
     }
@@ -187,7 +196,7 @@ public class MahjongEngine {
         // Find index of current player in players array (see MahjongEngine) to use in calculation 
         int playerIndex = 0;
         for(int i = 0; i < playerArr.length; i++){
-            if(GetPlayers()[i] == player) playerIndex = i;
+            if(playerArr[i] == player) playerIndex = i;
         }
         return playerIndex;
     }
@@ -206,16 +215,21 @@ public class MahjongEngine {
     }
 
     public Player[] OtherPlayers(Player player){
-        Player[] currentlyPlaying = currentlyPlaying();
-        Player[] temp = new Player[currentlyPlaying.length-1];
-        int counter = 0;
-        for (int i = 0; i < currentlyPlaying.length; i++) {
-            if(players[i].GetWind() != player.GetWind()){
-                temp[counter] = currentlyPlaying[i];
-                counter++;
+        Player[] currentlyPlaying = CurrentlyPlaying();
+        
+        if(player.GetIsPlaying()){
+            Player[] temp = new Player[currentlyPlaying.length-1];
+            int counter = 0;
+            for (int i = 0; i < currentlyPlaying.length; i++) {
+                if(currentlyPlaying[i].GetWind() != player.GetWind()){
+                    temp[counter] = currentlyPlaying[i];
+                    counter++;
+                }
             }
+            return temp;
+        } else{
+            return currentlyPlaying;
         }
-        return temp;
     }
 
     public Tiles GetLiveDiscard() {
@@ -236,7 +250,9 @@ public class MahjongEngine {
                 return NO_COMPLETE_MELD;
             }
         } else if(meldType == Tiles.CHOW_MELD){
-            if(relativePlayerPos(playerOfDiscard, player) == INCORRECT_POSITION){
+            int discarderIndex = FindPlayerIndex(playerOfDiscard, CurrentlyPlaying());
+            int playerIndex = FindPlayerIndex(player, CurrentlyPlaying());
+            if(Math.floorMod(playerIndex-1, CurrentlyPlaying().length) != discarderIndex){
                 return INCORRECT_POSITION;
             } else if(player.CheckMeld(liveDiscard) != Tiles.CHOW_MELD && player.CheckMeld(liveDiscard) != Tiles.PONG_CHOW_MELD){
                 return NO_COMPLETE_MELD;
