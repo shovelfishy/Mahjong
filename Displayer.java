@@ -1,37 +1,14 @@
-import java.util.Arrays;
-
 public class Displayer {
 
-    public static final int BOARD_WIDTH = 105;
-  
-    private MahjongEngine me;
+    // GLOBAL CONSTANT
+    public static final int BOARD_WIDTH = 113;
 
-    // Constructor
-    public Displayer(MahjongEngine me){
-        this.me = me;
-    }
 
-    /* JAVA DOC DESC 
-    * @param PARAM NAME      - 
-    * @return         -  */
-    private String displayPlayer(int wind){
-        switch(wind){
-            case Player.EAST_WIND:
-                return "EAST PLAYER";
-            case Player.SOUTH_WIND:
-                return "SOUTH PLAYER";
-            case Player.WEST_WIND:
-                return "WEST PLAYER";
-            case Player.NORTH_WIND:
-                return "NORTH PLAYER";
-            default:
-                return null;
-        }
-    }
-
-    /* JAVA DOC DESC 
-    * @param PARAM NAME      - 
-    * @return         -  */
+    //================== PRIVATE METHODS ====================//
+    // DEVELOPED BY: DANIEL
+    /* Creates a string with a specified number of spaces
+    * @param num      - Number of spaces to return
+    * @return         - String with spaces*/
     private String spaces(int num){
         String spaces = "";
         for (int i = 0; i < num; i++) {
@@ -40,79 +17,85 @@ public class Displayer {
         return spaces;
     }
 
-    /* JAVA DOC DESC 
-    * @param PARAM NAME      - 
-    * @return         -  */
+    // DEVELOPED BY: EDWARD
+    /* Display tiles horizontally with a printing offset from the right side 
+    * @param tiles            - The Tiles array to display
+    * @param printOffset      - A string with the amount of spaces to shift the tiles during print */
     private void displayTiles(Tiles[] tiles, String printOffset){
-        int handLength = 8*tiles.length+1;
+        int handLength = 8*tiles.length+1; // Calculate how many characters to print
 
-        System.out.print(printOffset);
-        for (int i = 0; i < handLength; i++){
+        System.out.print(printOffset); // The offset will be printed on every row the tiles display
+        for (int i = 0; i < handLength; i++){ // Print first row of dashes
             System.out.print("-");
         }
         System.out.print("\n"+printOffset);
-        for (int i = 0; i < tiles.length; i++){
+        for (int i = 0; i < tiles.length; i++){ // Print each tile's number
             System.out.print(tiles[i].DisplayTileNum());
         }
         System.out.println("|");
         System.out.print(printOffset);
-        for (int i = 0; i < tiles.length; i++){
+        for (int i = 0; i < tiles.length; i++){ // Print each tile's suit
             System.out.print(tiles[i].DisplayTileSuit());
         }
-        System.out.println("|");
+        System.out.println("|");    
 
         System.out.print(printOffset);
-        for (int i = 0; i < handLength; i++){
+        for (int i = 0; i < handLength; i++){ // Print last row of dashes
             System.out.print("-");
         }
         System.out.println();
     }
 
-    /* JAVA DOC DESC 
-    * @param PARAM NAME      - 
-    * @return         -  */
+    // DEVELOPED BY: EDWARD
+    /* Display a player's exposed melds. Will be used for current player and opposite player only
+    * @param melds                      - The melds to print 
+    * @param distanceFromBoardEdge      - Amount of space from the left side of board (to center printing the melds)  
+    * @param numTilesInHand             - Number of tiles the player being printed has (to center printing the melds) */
     private void displayMelds(Tiles[][] melds, int distanceFromBoardEdge, int numTilesInHand){
-        int meldLength = 9*melds.length;
-        int displayDist = (numTilesInHand*8+1-meldLength)/2 + distanceFromBoardEdge;
-        String spaces = spaces(displayDist);
+        int meldLength = 9*melds.length; // Calculate how many characters to print
+        int displayDist = (numTilesInHand*8+1-meldLength)/2 + distanceFromBoardEdge; // How far first meld should be printed from the left side of board
+        String spaces = spaces(displayDist); // Used to help print empty spaces to offset and center each row of the meld
 
         System.out.print(spaces);
-        for (int i = 0; i < meldLength; i++){
+        for (int i = 0; i < meldLength; i++){ // First row of dashes
             System.out.print("-");
         }
         System.out.println();
-        for(int i = 0; i < 3; i++){
+        for(int i = 0; i < 3; i++){ // Iterate through each tile of each meld
             System.out.print(spaces);
-            for (int j = 0; j < melds.length; j++){
-                System.out.print(melds[j][i].DisplayTileNum());
+            for (int j = 0; j < melds.length; j++){ // Iterate through each meld
+                System.out.print(melds[j][i].DisplayTileNum()); // Print number of each tile of each meld
                 System.out.print("|");
             }
             System.out.println();
         }
         System.out.print(spaces);
 
-        for (int i = 0; i < melds.length; i++){
-            System.out.print(melds[i][0].DisplayTileSuit());
+        for (int i = 0; i < melds.length; i++){ // Print each meld's suit
+            System.out.print(melds[i][0].DisplayTileSuit()); 
             System.out.print("|");
         }
         System.out.print("\n"+spaces);
 
-        for (int i = 0; i < meldLength; i++){
+        for (int i = 0; i < meldLength; i++){ // Last row of dashes
             System.out.print("-");
         }
         System.out.println();
     }
 
-    /* JAVA DOC DESC 
-    * @param PARAM NAME      - 
-    * @return         -  */
-    private void displayMelds(Tiles[][] tiles, Tiles[][] tiles2, Player left, Player right){
-        int meldLength = 9*tiles.length;
-        int meld2Length = 9*tiles2.length;
+    // DEVELOPED BY: EDWARD
+    /* Display a player's exposed melds. Will be used for current player and opposite player only
+    * @param melds                      - The melds to print 
+    * @param distanceFromBoardEdge      - Amount of space from the left side of board (to center printing the melds)  
+    * @param numTilesInHand             - Number of tiles the player being printed has (to center printing the melds) */
+    private void displayMelds(Tiles[][] melds, Tiles[][] melds2, Player left, Player right, Tiles discardTile){
+        int meldLength = 9*melds.length; // Calculate how many characters to print for players on the left
+        int meld2Length = 9*melds2.length; // Calculate how many characters to print for players on the right
         
-        String playerLeft = displayPlayer(left.GetWind()); 
-        String playerRight = displayPlayer(right.GetWind()); 
-        int boardPlayerDist = (BOARD_WIDTH-playerLeft.length()-playerRight.length());
+        // Display left and right players' seat wind
+        String playerLeft = left.DisplayPlayer(); 
+        String playerRight = right.DisplayPlayer(); 
+        int boardPlayerDist = (BOARD_WIDTH-playerLeft.length()-playerRight.length()); // Distance between both players seat display
         String spacesPlayer = spaces(boardPlayerDist);
 
         int boardCenterDist = BOARD_WIDTH - meldLength - meld2Length; // The gap in the center of the board between the left and right players' melds, minus the space that discard tile takes up
@@ -123,119 +106,159 @@ public class Displayer {
         String spacesLeft = spaces(boardLeftDist);
         String spacesRight = spaces(boardRightDist);
 
+        // If both players have exposed melds, then both players' seat display will be on the edge of the board
         if(meldLength != 0 && meld2Length != 0){
             System.out.println(playerLeft+spacesPlayer+playerRight);
         }
         
+        // If both players do not have exposed melds, then their seat display will be centered
         if(meldLength == 0 && meld2Length == 0){
-            boardCenterDist = BOARD_WIDTH - (playerLeft.length()+10) - (playerRight.length()+10);
+            // Calculations to center display
+            boardCenterDist = BOARD_WIDTH - (playerLeft.length()+10) - (playerRight.length()+10); // Distance between both players seat display but with some padding
+
+            // Distance on the left and right of discard pile so as to make it centered
             boardLeftDist = (boardCenterDist - 9)/2;
             boardRightDist = boardCenterDist-boardLeftDist-9;
             spacesLeft = spaces(boardLeftDist + playerLeft.length()+10);
             spacesRight = spaces(boardRightDist);
             System.out.println();
         } else if(meldLength == 0){
-            boardCenterDist = BOARD_WIDTH - (playerLeft.length()+10) - meld2Length;
+            // Calculations to center display
+            boardCenterDist = BOARD_WIDTH - (playerLeft.length()+10) - meld2Length; // Distance between both players seat display but with some padding for left player seat display
+            
+            // Distance on the left and right of discard pile so as to make it centered
             boardLeftDist = (boardCenterDist - 9)/2;
             boardRightDist = boardCenterDist-boardLeftDist-9;
             spacesLeft = spaces(boardLeftDist + playerLeft.length()+10);
             spacesRight = spaces(boardRightDist);
             System.out.println(spaces(playerLeft.length())+spacesPlayer+playerRight);
         } else if(meld2Length == 0){
-            boardCenterDist = BOARD_WIDTH - meldLength - (playerRight.length()+10);
+            // Calculations to center display
+            boardCenterDist = BOARD_WIDTH - meldLength - (playerRight.length()+10); // Distance between both players seat display but with some padding for right player seat display
+            
+            // Distance on the left and right of discard pile so as to make it centered
             boardLeftDist = (boardCenterDist - 9)/2;
             boardRightDist = boardCenterDist-boardLeftDist-9;
             spacesLeft = spaces(boardLeftDist);
             System.out.println(playerLeft+spacesPlayer+spaces(playerRight.length()));
         }
 
-        Tiles discardTile = me.GetLiveDiscard();
+        // The strings of each row of the discard pile stored in an array
+        // Will have different displays depending on if there is a discard tile or not
         String[] discardStrings;
-        if(discardTile != null){
+        if(discardTile != null){ // If no discard tile in discard pile
             discardStrings = new String[]{"---------", discardTile.DisplayTileNum()+"|", discardTile.DisplayTileSuit()+"|", "---------", "DISCARDED"};
-        } else{
+        } else{ // If there is a discard tile in discard pile
             discardStrings = new String[]{String.format("%9s",""), "---------", "|  NO   |", "|DISCARD|", "---------"};
         }
 
         
-        for (int i = 0; i < meldLength; i++){
+        for (int i = 0; i < meldLength; i++){ // First row of dashes
             System.out.print("-");
         }
-        System.out.print(spacesCenter);
-        for (int i = 0; i < meld2Length; i++){
+        System.out.print(spacesCenter); // Empty space in between both sets of melds
+        for (int i = 0; i < meld2Length; i++){ // First row of dashes
             System.out.print("-");
         }
         System.out.println();
 
 
+        // Iterate through each tile of each meld
         for(int i = 0; i < 3; i++){
-            for (int j = 0; j < tiles.length; j++){
-                System.out.print(tiles[j][i].DisplayTileNum());
+            for (int j = 0; j < melds.length; j++){ // The tile number in left player melds
+                System.out.print(melds[j][i].DisplayTileNum());
                 System.out.print("|");
             }
 
-            if(meldLength == 0 && i == 2){
+            if(meldLength == 0 && i == 2){ // If left player has no melds, print their seat display here
                 System.out.printf("%10s%s", "", playerLeft);
                 System.out.print(spaces(boardLeftDist));
-            } else {
+            } else { // Otherwise just print empty space
                 System.out.print(spacesLeft);
             }
-            System.out.print(discardStrings[i]);
-            if(meld2Length == 0 && i == 2){
+            System.out.print(discardStrings[i]); // Discard tile
+            if(meld2Length == 0 && i == 2){ // If right player has no melds, print their seat display here
                 System.out.print(spaces(boardRightDist));
                 System.out.printf("%s", playerRight);
-            } else {
+            } else { // Otherwise just print empty space
                 System.out.print(spacesRight);
             }
 
-            for (int j = 0; j < tiles2.length; j++){
-                System.out.print(tiles2[j][i].DisplayTileNum());
+            for (int j = 0; j < melds2.length; j++){ // The tile number in right player melds
+                System.out.print(melds2[j][i].DisplayTileNum());
                 System.out.print("|");
             }
             System.out.println();
         }
 
 
-        for(int i = 0; i < tiles.length; i++){
-            System.out.print(tiles[i][0].DisplayTileSuit());
+        for(int i = 0; i < melds.length; i++){ // Suit of all melds for left player
+            System.out.print(melds[i][0].DisplayTileSuit());
             System.out.print("|");
         }
         System.out.print(spacesLeft);
-        System.out.print(discardStrings[3]);
+        System.out.print(discardStrings[3]); // Discard tile
         System.out.print(spacesRight);
-        for(int i = 0; i < tiles2.length; i++){
-            System.out.print(tiles2[i][0].DisplayTileSuit());
+        for(int i = 0; i < melds2.length; i++){ // Suit of all melds for right player
+            System.out.print(melds2[i][0].DisplayTileSuit());
             System.out.print("|");
         }
 
         System.out.println();
 
-        for(int i = 0; i < meldLength; i++){
+        for(int i = 0; i < meldLength; i++){ // Last row of dashes
             System.out.print("-");
         }
         System.out.print(spacesLeft);
-        System.out.print(discardStrings[4]);
+        System.out.print(discardStrings[4]); // Discard tile
         System.out.print(spacesRight);
-        for(int i = 0; i < meld2Length; i++){
+        for(int i = 0; i < meld2Length; i++){ // Last row of dashes
             System.out.print("-");
         }
         System.out.println();
     }
 
-    /* JAVA DOC DESC 
-    * @param PARAM NAME      - 
-    * @return         -  */    
-    public void DisplayBoard(Player player){
 
-        // Find index of current player in players array (see MahjongEngine) to use in calculation 
-        int currPlayerIndex = 0;
-        for(int i = 0; i < me.players.length; i++){
-            if(me.players[i] == player) currPlayerIndex = i;
+    //================== PUBLIC METHODS ====================//
+    // DEVELOPED BY: DANIEL
+    /* Display the discard tile 
+    * @param discardTiles       - The live discard tile */
+    public void DisplayDiscard(Tiles discardTile){
+        System.out.println("  ---------");
+        System.out.println("  "+discardTile.DisplayTileNum()+"|");
+        System.out.println("  "+discardTile.DisplayTileSuit()+"|");
+        System.out.println("  ---------");
+        System.out.println("DISCARDED TILE");
+    }
+
+    // DEVELOPED BY: DANIEL
+    /* Display a player's hand
+    * @param discardTiles       - The player
+    * @param offset             - An offset from the side of the board */
+    public void DisplayHand(Player player, String offset){
+        Tiles[] playerTiles = player.GetConcealedTiles();
+        displayTiles(playerTiles, offset); // Display all the tiles in player's hand
+
+        // Print position number under each tile
+        System.out.print(offset);
+        for (int i = 1; i <= playerTiles.length; i++){
+            for (int j = 1; j <= 7; j++) {
+                if(j == 4){
+                    System.out.printf("%2d", i);
+                } else System.out.print(" ");
+            }
         }
-        // Calcualte the position of each player relative to the current player
-        Player leftPlayer = me.players[(currPlayerIndex+3)%4];
-        Player rightPlayer = me.players[(currPlayerIndex+1)%4];
-        Player upPlayer = me.players[(currPlayerIndex+2)%4];
+        System.out.println();
+    }
+
+    // DEVELOPED BY: EDWARD
+    /* Prints the whole board from the point of view of the current player
+    * @param player              - The current player
+    * @param leftPlayer          - Player to the right of curremt
+    * @param rightPlayer         - Player to the right of current player
+    * @param upPlayer            - Player opposite current player
+    * @param discardTile         - Current live discard tile */    
+    public void DisplayBoard(Player player, Player leftPlayer, Player rightPlayer, Player upPlayer, Tiles discardTile){
 
         // Array of current player's hand and exposed tiles
         Tiles[] playerTiles = player.GetConcealedTiles();
@@ -245,46 +268,39 @@ public class Displayer {
         int distAdjacentPlayers = BOARD_WIDTH-9*(leftPlayer.GetExposedMelds().length+rightPlayer.GetExposedMelds().length); // Distance between the two adjacent players' melds
         int leftOffset = 9*(leftPlayer.GetExposedMelds().length);
 
+        // Calculate the offset from the left of the board depending on whether left and right player have any exposed melds
         if(leftPlayer.GetExposedMelds().length == 0 && rightPlayer.GetExposedMelds().length == 0){
-            distAdjacentPlayers = BOARD_WIDTH-(20+displayPlayer(leftPlayer.GetWind()).length()+displayPlayer(rightPlayer.GetWind()).length());
-            leftOffset = 10+displayPlayer(leftPlayer.GetWind()).length();
+            distAdjacentPlayers = BOARD_WIDTH-(20+leftPlayer.DisplayPlayer().length()+rightPlayer.DisplayPlayer().length());
+            leftOffset = 10+leftPlayer.DisplayPlayer().length();
         } else if(leftPlayer.GetExposedMelds().length == 0){
-            distAdjacentPlayers = BOARD_WIDTH-(10+displayPlayer(leftPlayer.GetWind()).length()+9*rightPlayer.GetExposedMelds().length);
-            leftOffset = 10+displayPlayer(leftPlayer.GetWind()).length();
+            distAdjacentPlayers = BOARD_WIDTH-(10+leftPlayer.DisplayPlayer().length()+9*rightPlayer.GetExposedMelds().length);
+            leftOffset = 10+leftPlayer.DisplayPlayer().length();
         } else if(rightPlayer.GetExposedMelds().length == 0){
-            distAdjacentPlayers = BOARD_WIDTH-(10+displayPlayer(rightPlayer.GetWind()).length()+9*leftPlayer.GetExposedMelds().length);
+            distAdjacentPlayers = BOARD_WIDTH-(10+rightPlayer.DisplayPlayer().length()+9*leftPlayer.GetExposedMelds().length);
         }
         int displayDistHandTiles = (distAdjacentPlayers-(8*playerTiles.length+1))/2 + leftOffset; // Distance from edge of board to current player's tiles
         String spaces = spaces(displayDistHandTiles);
         
         // Distance from edge of board to opposite player's melds
-        int displayDistUpPlayer = (distAdjacentPlayers - displayPlayer(upPlayer.GetWind()).length())/2+leftOffset;
+        int displayDistUpPlayer = (distAdjacentPlayers - upPlayer.DisplayPlayer().length())/2+leftOffset;
         String spaces2 = spaces(displayDistUpPlayer);
 
+        System.out.println();
         if(upPlayer.GetExposedMelds().length != 0){ // Print the exposed melds of the player opposite current player, if any
             displayMelds(upPlayer.GetExposedMelds(), displayDistHandTiles, playerTiles.length);
         }
-        System.out.println(spaces2 + displayPlayer(upPlayer.GetWind())+"\n"); // Print opposite player's seat wind
-        displayMelds(leftPlayer.GetExposedMelds(), rightPlayer.GetExposedMelds(), leftPlayer, rightPlayer); // Print exposed melds of adjacent players (left & right)
+        System.out.println(spaces2 + upPlayer.DisplayPlayer()+"\n"); // Print opposite player's seat wind
+        displayMelds(leftPlayer.GetExposedMelds(), rightPlayer.GetExposedMelds(), leftPlayer, rightPlayer, discardTile); // Print exposed melds of adjacent players (left & right)
 
-        // Print empty space if current player has no exposed melds
+        // Print empty spaces (new lines) if current player has no exposed melds
         if(playerMelds.length != 0){
             System.out.println("\n\n");
             displayMelds(playerMelds, displayDistHandTiles, playerTiles.length);        
         } else{
             System.out.println("\n\n");
         }
-        displayTiles(playerTiles, spaces); // Print player's hand
 
-        // Print position number under each tile
-        System.out.print(spaces);
-        for (int i = 1; i <= playerTiles.length; i++){
-            for (int j = 1; j <= 7; j++) {
-                if(j == 4){
-                    System.out.printf("%2d", i);
-                } else System.out.print(" ");
-            }
-        }
+        DisplayHand(player, spaces);// Print player's hand
         System.out.println();
     }  
   }
