@@ -89,20 +89,21 @@ public class Player {
         
         // Iterate through arr and sets the first occurence of any element 
         // from tilesToRemove to null
-        int counter = 0;
-        for (int i = 0; i < arr.length; i++) {
-            if(counter == tilesToRemove.length) break;
-            // Check that tile has not already been removed and whether
-            // it is a tile that should be removed
-            if(arr[i] != null && arr[i].Equals(tilesToRemove[counter])){ 
-                arr[i] = null;
-                counter++;
+        for (int i = 0; i < tilesToRemove.length; i++) {
+            for (int j = 0; j < arr.length; j++) {
+                // Check that tile has not already been removed and whether
+                // it is a tile that should be removed
+                if(arr[j] != null && arr[j].Equals(tilesToRemove[i])){ 
+                    arr[j] = null;
+                    break;
+                }
+                
             }
         }
 
         // Removes all the null elements in arr
         temp = new Tiles[arr.length-tilesToRemove.length];
-        counter = 0;
+        int counter = 0;
         for (int i = 0; i < arr.length; i++) {
             if(arr[i] != null){ // If element is not a null element then add it to the temp array
                 temp[counter] = arr[i];
